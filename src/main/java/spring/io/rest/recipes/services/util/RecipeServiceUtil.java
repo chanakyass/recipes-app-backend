@@ -33,8 +33,8 @@ public class RecipeServiceUtil {
     }
 
     public void saveUnavailableIngredients(RecipeDto recipeDto) {
-        List<Ingredient> unavailableIngredients;
-        List<IngredientDto> unavailableIngredientDtos;
+        List<Ingredient> ingredientsToBePersisted;
+        List<IngredientDto> ingredientsToBePersistedDtos;
 
         recipeDto.getRecipeIngredients().forEach(recipeIngredientDto -> {
             IngredientDto ingredientDto = recipeIngredientDto.getIngredient();
@@ -42,42 +42,42 @@ public class RecipeServiceUtil {
 
         });
 
-        List<IngredientDto> allNullIdIngredientsInInput = recipeDto.getRecipeIngredients().stream().map(RecipeIngredientDto::getIngredient).filter(ingredient ->
+        List<IngredientDto> newlyAddedIngredientsInInput = recipeDto.getRecipeIngredients().stream().map(RecipeIngredientDto::getIngredient).filter(ingredient ->
                 ingredient.getId() == null).collect(Collectors.toCollection(ArrayList::new));
 
-        Map<String, Ingredient> nameToIngredientMapOfAvailIngredients = ingredientRepository.findIngredientsByNameIn(
-                allNullIdIngredientsInInput.stream()
+        Map<String, Ingredient> newlyAddedIngredientsAvailInDb = ingredientRepository.findIngredientsByNameIn(
+                newlyAddedIngredientsInInput.stream()
                 //Map ingredient to corresponding to its name
                 .map(IngredientDto::getName).collect(Collectors.toList())
                 ) // function call ends
                 .stream().collect(Collectors.toMap(Ingredient::getName, ingredient -> ingredient ));
 
-        allNullIdIngredientsInInput.forEach(ingredientDto -> {
+        newlyAddedIngredientsInInput.forEach(ingredientDto -> {
             String ingredientNameToSearch = ingredientDto.getName();
-            if(nameToIngredientMapOfAvailIngredients.containsKey(ingredientNameToSearch)) {
-                ingredientDto.setId(nameToIngredientMapOfAvailIngredients.get(ingredientNameToSearch).getId());
+            if(newlyAddedIngredientsAvailInDb.containsKey(ingredientNameToSearch)) {
+                ingredientDto.setId(newlyAddedIngredientsAvailInDb.get(ingredientNameToSearch).getId());
             }
         });
 
-        unavailableIngredientDtos = allNullIdIngredientsInInput.stream().filter(ingredientDto -> ingredientDto.getId() == null).collect(Collectors.toList());
+        ingredientsToBePersistedDtos = newlyAddedIngredientsInInput.stream().filter(ingredientDto -> ingredientDto.getId() == null).collect(Collectors.toList());
 
-        unavailableIngredients = ingredientMapper.toIngredientList(unavailableIngredientDtos);
+        ingredientsToBePersisted = ingredientMapper.toIngredientList(ingredientsToBePersistedDtos);
 
-        ingredientRepository.saveAll(unavailableIngredients);
+        ingredientRepository.saveAll(ingredientsToBePersisted);
 
-        IntStream.range(0, unavailableIngredients.size())
-                .forEach(i -> unavailableIngredientDtos.get(i).setId(unavailableIngredients.get(i).getId()));
+        IntStream.range(0, ingredientsToBePersisted.size())
+                .forEach(i -> ingredientsToBePersistedDtos.get(i).setId(ingredientsToBePersisted.get(i).getId()));
     }
 
-    public void addOrRemoveRecipeIngredients(RecipeDto recipeDto, Recipe recipe) {
-        List<RecipeIngredient> recipeIngredientList = recipe.getRecipeIngredients();
-        List<RecipeIngredientDto> updatedRecipeIngredientList = recipeDto.getRecipeIngredients();
+    public void addOrRemoveRecipeIngredients(RecipeDto updatedRecipeDto, Recipe recipeFromDb) {
+        List<RecipeIngredient> recipeIngredientList = recipeFromDb.getRecipeIngredients();
+        List<RecipeIngredientDto> updatedRecipeIngredientList = updatedRecipeDto.getRecipeIngredients();
 
         List<RecipeIngredient> extraIngredients = updatedRecipeIngredientList.stream()
                 .filter(recipeIngredientDto -> recipeIngredientDto.getId() == null)
                 .map(recipeIngredientDto -> {
                     RecipeIngredient recipeIngredient = recipeIngredientMapper.toRecipeIngredient(recipeIngredientDto);
-                    recipeIngredient.setRecipe(recipe);
+                    recipeIngredient.setRecipe(recipeFromDb);
                     return recipeIngredient;
                 }).collect(Collectors.toList());
 
