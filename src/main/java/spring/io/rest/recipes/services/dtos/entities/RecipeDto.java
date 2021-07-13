@@ -1,5 +1,6 @@
 package spring.io.rest.recipes.services.dtos.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -31,7 +32,8 @@ public class RecipeDto {
     private UserProxyDto user;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    //@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     public LocalDateTime getCreatedOn() {
         return createdOn;
     }

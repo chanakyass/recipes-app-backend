@@ -41,7 +41,7 @@ public class UserTestDataFactory {
     private UserProxyDto getUserProxyDto(User user) {
         FullName fullName = user.getFullName();
         return new UserProxyDto(user.getId(), fullName.getFirstName(), fullName.getMiddleName(), fullName.getLastName(),
-                user.getProfileName(), user.getEmail(), user.getUserSummary());
+                user.getProfileName(), user.getEmail(), user.getUserSummary(), user.getDob());
     }
 
 }

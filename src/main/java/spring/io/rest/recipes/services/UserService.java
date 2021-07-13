@@ -5,7 +5,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import spring.io.rest.recipes.exceptions.ApiOperationException;
+import spring.io.rest.recipes.models.entities.Role;
 import spring.io.rest.recipes.models.entities.User;
+import spring.io.rest.recipes.repositories.RoleRepository;
 import spring.io.rest.recipes.repositories.UserRepository;
 import spring.io.rest.recipes.services.dtos.entities.UserDto;
 import spring.io.rest.recipes.services.dtos.entities.UserProxyDto;
@@ -13,17 +15,21 @@ import spring.io.rest.recipes.services.dtos.entities.UserUpdateDto;
 import spring.io.rest.recipes.services.dtos.mappers.UserMapper;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
     }
@@ -36,6 +42,8 @@ public class UserService {
         }
         User user = userMapper.toUser(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Role role = roleRepository.findByAuthority("ROLE_USER").orElseThrow(() -> new ApiOperationException("Internal Error"));
+        user.setGrantedAuthoritiesList(List.of(role));
         user = userRepository.save(user);
         return userMapper.toUserProxyDto(user);
     }

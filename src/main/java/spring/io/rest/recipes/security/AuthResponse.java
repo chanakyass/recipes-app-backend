@@ -14,6 +14,6 @@ public class AuthResponse {
     private String jwtToken;
 
     public static AuthResponse mapUserToAuthResponse(User user, String jwtToken) {
-        return new AuthResponse(new UserProxyDto(user.getId(), user.getFullName().getFirstName(), user.getFullName().getMiddleName(), user.getFullName().getLastName(), user.getProfileName(), user.getEmail(), user.getUserSummary()), jwtToken);
+        return new AuthResponse(new UserProxyDto(user.getId(), user.getFullName().getFirstName(), user.getFullName().getMiddleName(), user.getFullName().getLastName(), user.getProfileName(), user.getEmail(), user.getUserSummary(), user.getDob()), jwtToken);
     }
 }

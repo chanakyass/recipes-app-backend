@@ -2,6 +2,7 @@ package spring.io.rest.recipes.services.dtos.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -26,7 +27,9 @@ public class UserDto {
     private String userSummary;
     private LocalDate dob;
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<RoleDto> grantedAuthoritiesList;
 
     @JsonSerialize(using = LocalDateSerializer.class)
