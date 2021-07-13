@@ -32,8 +32,7 @@ public class RecipeDto {
     private UserProxyDto user;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    //@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     public LocalDateTime getCreatedOn() {
         return createdOn;
     }
