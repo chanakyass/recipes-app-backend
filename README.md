@@ -108,7 +108,7 @@ Test them using postman or any other rest client.
 ```json
 {
   "id": 1, 
-"firstName": "firstName",
+  "firstName": "firstName",
   "middleName": "",
   "lastName": "lastName",
   "profileName": "profileName",
@@ -118,59 +118,60 @@ Test them using postman or any other rest client.
 }
 ```
 
-##### <a id="recipe">Create Post </a>
+##### <a id="recipe">Create/Modify recipe </a>
+List of Units of meaurements than can be given for uom field ["MILLIGRAMS", "GRAMS", "KILOGRAMS", "MILLILITRES", "LITRES", "TEA_SPOON", "TABLE_SPOON", "NUMBER"]
 ```json
 {
+  "id": "---integer to be given for modify mode",
   "name": "Paneer Tikka",
   "description": "Indian food/Punjabi",
-  "recipeImageAddress": "#address to the image"
+  "recipeImageAddress": "#address to the image",
   "createdOn": "2021-06-22T18:54:04Z",
   "itemType": "VEG",
   "serving": 4,
+  "cookingInstructions": "random instructions",
   "recipeIngredients": [
     {
       "ingredient": {
         "name": "Salt"
       },
       "quantity": 0.75,
-      "uom": 0
+      "uom": "MILLIGRAMS"
     },
-        { 
+    { 
       "ingredient": {
           "name": "Paneer"
       },
       "quantity": 0.25,
-      "uom": 2
+      "uom": "MILLIGRAMS"
     },
     {
-        "ingredient": {
-            "id": 1, 
-            "name": "Oil"
-        },
-        "quantity": 25,
-        "uom": 3
-    }
-
-        
+      "ingredient": {
+	   "id": 1, 
+	   "name": "Oil"
+       },
+       "quantity": 25,
+       "uom": "MILLIGRAMS"
+    }   
   ]
 }
 ```
 ##### <a id="ingredient">update ingredient -> /api/v1/admin/ingredient</a>
 ```json
 {
-"id": 1,
-"name": "name",
-"description": "description"
+  "id": 1,
+  "name": "name",
+  "description": "description"
 }
 ```
 
 ##### <a id="listOfIngredients">Create ingredients -> /api/v1/admin/ingredients</a>
 ```json
 [
-{
-"name": "name",
-"description": "description"
-}
+  {
+    "name": "name",
+    "description": "description"
+  }
 ]
 
 ```
