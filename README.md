@@ -16,19 +16,22 @@ The application follows a stateless protocol and uses restful services to add, u
 git clone https://github.com/chanakyass/recipes-app-backend.git
 ```
 
-**2. embedded h2 database already available. Database is demodb and username and pasword are dev and dev. 
-Howvever if you want to change you can create a new h2 database and update following properties**
-
-+ open `src/main/resources/application.properties`
-+ update `spring.datasource.url` property by adding new database name in the end
-+ open `src/main/resources/application-dev.properties`
-+ change `spring.datasource.username` and `spring.datasource.password` as per your h2 database installation
-
-**4. Run the app using maven**
+**2. Embedded h2 database already available. If you want to use the existing embedded database execute the below command to run the application.**
 
 ```bash
-mvn  spring-boot:run -Dspring-boot.run.jvmArguments="-DACTIVE_PROFILE=dev"
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-DACTIVE_PROFILE=dev -DDEV_USERNAME=dev -DDEV_PASSWORD=dev -DDEV_DBNAME=demodb"
 ```
+
+**3 If you want to configure your own embedded database, do the following**
+
+[How to create embedded H2 database](https://www.h2database.com/html/features.html#database_url)
+
+then run the following command to run application
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-DACTIVE_PROFILE=dev -DDEV_USERNAME=#username you have used -DDEV_PASSWORD=#password you have used -DDEV_DBNAME=#db you have created"
+```
+
 The app will start running at <http://localhost:8080>
 
 ## Explore Rest APIs
@@ -37,14 +40,14 @@ The app defines following CRUD APIs.
 
 ### Auth
 
-v1 -- below is the version of the api. env variable {VERSION_NUMBER} 
+v1 is the version number of the API. Since this is development environment we can use v1 version
 
 | Method | Url | Decription | Sample Valid Request Body | 
 | ------ | --- | ---------- | --------------------------- |
-| POST   | /api/v1/public/register | Sign up | [JSON](#user) |
-| POST   | /api/v1/public/login | Log in | [JSON](#login) |
-| POST   | /api/v1/admin/register | Sign up | [JSON](#user) |
-| POST   | /api/v1/admin/login | Log in | [JSON](#login) |
+| POST   | /api/v1/public/register | User Sign up | [JSON](#user) |
+| POST   | /api/v1/public/login | User Log in | [JSON](#login) |
+| POST   | /api/v1/admin/register | Admin Sign up | [JSON](#user) |
+| POST   | /api/v1/admin/login | Admin Log in | [JSON](#login) |
 
 ### Users
 
@@ -79,7 +82,7 @@ Test them using postman or any other rest client.
 
 ## Sample Valid JSON Request Bodys
 
-##### <a id="user">Sign Up -> /api/public/register and /api/admin/register</a>
+##### <a id="user">Sign Up</a>
 ```json
 {
   "firstName": "firstName",
@@ -93,7 +96,7 @@ Test them using postman or any other rest client.
 }
 ```
 
-##### <a id="login">Log In -> /api/v1/public/login and api/v1/admin/login</a>
+##### <a id="login">Log In </a>
 ```json
 {
 	"username": "foo@rest.com",
@@ -101,11 +104,11 @@ Test them using postman or any other rest client.
 }
 ```
 
-##### <a id="userUpdate">Update User -> /api/v1/user</a>
+##### <a id="userUpdate">Update User </a>
 ```json
 {
   "id": 1, 
-	"firstName": "firstName",
+"firstName": "firstName",
   "middleName": "",
   "lastName": "lastName",
   "profileName": "profileName",
@@ -115,11 +118,12 @@ Test them using postman or any other rest client.
 }
 ```
 
-##### <a id="recipe">Create Post -> /api/v1/recipe</a>
+##### <a id="recipe">Create Post </a>
 ```json
 {
-	  "name": "Paneer Tikka",
+  "name": "Paneer Tikka",
   "description": "Indian food/Punjabi",
+  "recipeImageAddress": "#address to the image"
   "createdOn": "2021-06-22T18:54:04Z",
   "itemType": "VEG",
   "serving": 4,
@@ -140,7 +144,7 @@ Test them using postman or any other rest client.
     },
     {
         "ingredient": {
-            id: 1, 
+            "id": 1, 
             "name": "Oil"
         },
         "quantity": 25,
