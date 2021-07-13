@@ -118,29 +118,32 @@ Test them using postman or any other rest client.
 }
 ```
 
-##### <a id="recipe">Create Post </a>
+##### <a id="recipe">Create/Modify recipe </a>
+List of Units of meaurements than can be given for uom field ["MILLIGRAMS", "GRAMS", "KILOGRAMS", "MILLILITRES", "LITRES", "TEA_SPOON", "TABLE_SPOON", "NUMBER"]
 ```json
 {
+  "id": "---integer to be given for modify mode",
   "name": "Paneer Tikka",
   "description": "Indian food/Punjabi",
-  "recipeImageAddress": "#address to the image"
+  "recipeImageAddress": "#address to the image",
   "createdOn": "2021-06-22T18:54:04Z",
   "itemType": "VEG",
   "serving": 4,
+  "cookingInstructions": "random instructions",
   "recipeIngredients": [
     {
       "ingredient": {
         "name": "Salt"
       },
       "quantity": 0.75,
-      "uom": 0
+      "uom": "MILLIGRAMS"
     },
         { 
       "ingredient": {
           "name": "Paneer"
       },
       "quantity": 0.25,
-      "uom": 2
+      "uom": "MILLIGRAMS"
     },
     {
         "ingredient": {
@@ -148,7 +151,7 @@ Test them using postman or any other rest client.
             "name": "Oil"
         },
         "quantity": 25,
-        "uom": 3
+        "uom": "MILLIGRAMS"
     }
 
         
