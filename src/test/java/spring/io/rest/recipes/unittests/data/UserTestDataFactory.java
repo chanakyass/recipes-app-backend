@@ -1,5 +1,6 @@
 package spring.io.rest.recipes.unittests.data;
 
+import spring.io.rest.recipes.enums.AuthProvider;
 import spring.io.rest.recipes.models.entities.FullName;
 import spring.io.rest.recipes.models.entities.Role;
 import spring.io.rest.recipes.models.entities.User;
@@ -21,8 +22,8 @@ public class UserTestDataFactory {
 
     public User getRandomUser() {
         return new User(1L, new FullName("Random", "", "Name"), "random_user444", "random_user444@rest.com", "randpmpass",
-                LocalDate.of(1995, 6, 10), "Software Developer",
-                List.of(new Role(1L, "ROLE_USER")));
+                LocalDate.of(1995, 6, 10), "Software Developer", "random url",
+                List.of(new Role(1L, "ROLE_USER")), AuthProvider.local);
     }
 
     public UserUpdateDto getRandomUserUpdateDto() {

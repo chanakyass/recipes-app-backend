@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import spring.io.rest.recipes.config.SecurityProperties;
+import spring.io.rest.recipes.config.JWTSecurityProperties;
 import spring.io.rest.recipes.enums.Strategy;
 import spring.io.rest.recipes.exceptions.ApiAccessException;
 import spring.io.rest.recipes.security.jwt.AlgorithmStrategy;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 class AlgorithmStrategyTest {
 
     @Mock
-    private SecurityProperties securityProperties;
+    private JWTSecurityProperties JWTSecurityProperties;
     @Mock
     private KeyGenerator keyGenerator;
 
@@ -48,9 +48,9 @@ class AlgorithmStrategyTest {
 
     @Test
     void checkAlgorithmReturnedSuccessfully() throws GeneralSecurityException {
-        when(securityProperties.getSecretKey()).thenReturn(mockString);
-        when(securityProperties.getPrivateKey()).thenReturn(mockString);
-        when(securityProperties.getPublicKey()).thenReturn(mockString);
+        when(JWTSecurityProperties.getSecretKey()).thenReturn(mockString);
+        when(JWTSecurityProperties.getPrivateKey()).thenReturn(mockString);
+        when(JWTSecurityProperties.getPublicKey()).thenReturn(mockString);
         assertNotNull(algorithmStrategy.getAlgorithm(Strategy.AUTO));
         assertNotNull(algorithmStrategy.getAlgorithm(Strategy.SYMMETRIC_ENCRYPTION));
 
@@ -64,14 +64,14 @@ class AlgorithmStrategyTest {
 
     @Test
     void checkResultWhenGetPublicKeyThrowsException() throws GeneralSecurityException {
-        when(securityProperties.getPublicKey()).thenReturn(mockString);
+        when(JWTSecurityProperties.getPublicKey()).thenReturn(mockString);
         when(keyGenerator.getPublicKeyFromString(anyString())).thenThrow(GeneralSecurityException.class);
         assertThrows(ApiAccessException.class, () -> algorithmStrategy.getAlgorithm(Strategy.ASYMMETRIC_ENCRYPTION));
     }
 
     @Test
     void checkResultWhenGetPrivateKeyThrowsException() throws GeneralSecurityException {
-        when(securityProperties.getPrivateKey()).thenReturn(mockString);
+        when(JWTSecurityProperties.getPrivateKey()).thenReturn(mockString);
         when(keyGenerator.getPrivateKeyFromString(anyString())).thenThrow(GeneralSecurityException.class);
         assertThrows(ApiAccessException.class, () -> algorithmStrategy.getAlgorithm(Strategy.ASYMMETRIC_ENCRYPTION));
     }

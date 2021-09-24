@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import spring.io.rest.recipes.enums.Strategy;
 
-@ConfigurationProperties("app.security")
+@ConfigurationProperties("app.security.jwt")
 @Setter
 @Getter
-public class SecurityProperties {
+public class JWTSecurityProperties {
 
     private String issuer;
     private Strategy strategy;

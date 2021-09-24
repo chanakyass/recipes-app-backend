@@ -39,7 +39,7 @@ public class IngredientService {
     }
 
     public List<IngredientDto> getAllIngredientsStartingWith(String ingredientName) {
-        List<Ingredient> ingredientList = ingredientRepository.findIngredientsStartingWith(ingredientName);
+        List<Ingredient> ingredientList = ingredientRepository.findIngredientsStartingWith(ingredientName.strip());
         return ingredientMapper.toIngredientDtoList(ingredientList);
     }
 }

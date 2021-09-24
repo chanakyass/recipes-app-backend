@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.*;
 import org.hibernate.Hibernate;
+import spring.io.rest.recipes.enums.AuthProvider;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ public class User {
     private String password;
     private LocalDate dob;
     private String userSummary;
+    private String imageUrl;
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE},
         fetch = FetchType.LAZY)
     @JoinTable(name = "user_role", joinColumns = {@JoinColumn(name = "user_id",
@@ -43,6 +45,9 @@ public class User {
             uniqueConstraints = {@UniqueConstraint(name = "unique_user_role", columnNames = {"user_id", "role_id"})})
     @ToString.Exclude
     private List<Role> grantedAuthoritiesList;
+
+    @Enumerated
+    private AuthProvider authProvider;
 
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
