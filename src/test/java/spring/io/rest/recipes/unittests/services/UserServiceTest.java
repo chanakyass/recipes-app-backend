@@ -8,7 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import spring.io.rest.recipes.exceptions.ApiOperationException;
+import spring.io.rest.recipes.models.entities.Role;
 import spring.io.rest.recipes.models.entities.User;
+import spring.io.rest.recipes.repositories.RoleRepository;
 import spring.io.rest.recipes.repositories.UserRepository;
 import spring.io.rest.recipes.services.UserService;
 import spring.io.rest.recipes.services.dtos.entities.UserDto;
@@ -33,6 +35,9 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
     private UserMapper userMapper;
 
     @Mock
@@ -52,6 +57,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         UserTestDataFactory userTestDataFactory = AbstractTestDataFactory.getUserTestDataFactory();
+
         currentUser = userTestDataFactory.getRandomUser();
         currentUserDto = userTestDataFactory.getRandomUserDto();
         currentUserProxyDto = userTestDataFactory.getRandomUserProxyDto();
@@ -68,6 +74,10 @@ class UserServiceTest {
 
         when(userRepository.save(currentUser))
                 .thenReturn(currentUser);
+
+        Role role = currentUser.getGrantedAuthoritiesList().get(0);
+
+        when(roleRepository.findByAuthority(anyString())).thenReturn(Optional.ofNullable(role));
 
         when(userMapper.toUserProxyDto(currentUser)).thenReturn(currentUserProxyDto);
 

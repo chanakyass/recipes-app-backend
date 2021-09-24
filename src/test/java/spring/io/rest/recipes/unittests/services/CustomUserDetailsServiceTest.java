@@ -16,6 +16,7 @@ import spring.io.rest.recipes.models.entities.User;
 import spring.io.rest.recipes.repositories.UserRepository;
 import spring.io.rest.recipes.security.AuthRequest;
 import spring.io.rest.recipes.security.AuthResponse;
+import spring.io.rest.recipes.security.PayloadDetails;
 import spring.io.rest.recipes.security.UserPrincipal;
 import spring.io.rest.recipes.security.jwt.JwtTokenUtil;
 import spring.io.rest.recipes.services.CustomUserDetailsService;
@@ -56,7 +57,7 @@ class CustomUserDetailsServiceTest {
         Authentication authentication = Mockito.mock(Authentication.class);
         when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userPrincipal);
-        when(jwtTokenUtil.generateToken(any(UserPrincipal.class))).thenReturn(dummyJwt);
+        when(jwtTokenUtil.generateToken(any(PayloadDetails.class))).thenReturn(dummyJwt);
         assertEquals(customUserDetailsService.login(authRequest), authResponse);
     }
 

@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
 import spring.io.rest.recipes.controllers.RecipesController;
 import spring.io.rest.recipes.services.IngredientService;
 import spring.io.rest.recipes.services.RecipeCRUDServices;

@@ -14,6 +14,7 @@ import spring.io.rest.recipes.models.entities.User;
 import spring.io.rest.recipes.repositories.UserRepository;
 import spring.io.rest.recipes.security.AuthRequest;
 import spring.io.rest.recipes.security.AuthResponse;
+import spring.io.rest.recipes.security.PayloadDetails;
 import spring.io.rest.recipes.security.UserPrincipal;
 import spring.io.rest.recipes.security.jwt.JwtTokenUtil;
 
@@ -38,7 +39,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             Authentication authentication = authenticationManager.authenticate
                     (new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-            return AuthResponse.mapUserToAuthResponse(userPrincipal.getUser(), jwtTokenUtil.generateToken(userPrincipal));
+            return AuthResponse.mapUserToAuthResponse(userPrincipal.getUser(), jwtTokenUtil
+                    .generateToken(new PayloadDetails(userPrincipal.getUsername(), userPrincipal.getProfileName())));
 
         } catch (BadCredentialsException badCredentialsException) {
             throw new ApiAccessException(badCredentialsException.getLocalizedMessage());

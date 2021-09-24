@@ -1,7 +1,7 @@
 package spring.io.rest.recipes.security.jwt;
 
 import spring.io.rest.recipes.exceptions.ApiAccessException;
-import spring.io.rest.recipes.security.UserPrincipal;
+import spring.io.rest.recipes.security.PayloadDetails;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +15,6 @@ public interface JwtTokenUtil {
 
     String getSubjectFromToken(String token);
 
-    String generateToken(UserPrincipal userPrincipal) throws ApiAccessException;
+    String generateToken(PayloadDetails payloadDetails) throws ApiAccessException;
 
 }

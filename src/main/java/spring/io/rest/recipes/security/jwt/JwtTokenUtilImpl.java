@@ -10,31 +10,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import spring.io.rest.recipes.config.SecurityProperties;
+import spring.io.rest.recipes.config.JWTSecurityProperties;
 import spring.io.rest.recipes.exceptions.ApiAccessException;
-import spring.io.rest.recipes.security.UserPrincipal;
+import spring.io.rest.recipes.security.PayloadDetails;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Component
-@EnableConfigurationProperties(SecurityProperties.class)
+@EnableConfigurationProperties(JWTSecurityProperties.class)
 public class JwtTokenUtilImpl implements JwtTokenUtil {
 
-    private final SecurityProperties securityProperties;
+    private final JWTSecurityProperties JWTSecurityProperties;
     private final AlgorithmStrategy algorithmStrategy;
 
     @Autowired
-    public JwtTokenUtilImpl(SecurityProperties securityProperties, AlgorithmStrategy algorithmStrategy) {
-        this.securityProperties = securityProperties;
+    public JwtTokenUtilImpl(JWTSecurityProperties JWTSecurityProperties, AlgorithmStrategy algorithmStrategy) {
+        this.JWTSecurityProperties = JWTSecurityProperties;
         this.algorithmStrategy = algorithmStrategy;
     }
 
     @Override
     public void validate(String token) throws ApiAccessException {
         try {
-            JWTVerifier verifier = JWT.require(algorithmStrategy.getAlgorithm(securityProperties.getStrategy()))
-                    .withIssuer(securityProperties.getIssuer())
+            JWTVerifier verifier = JWT.require(algorithmStrategy.getAlgorithm(JWTSecurityProperties.getStrategy()))
+                    .withIssuer(JWTSecurityProperties.getIssuer())
                     .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
         }
@@ -43,16 +43,14 @@ public class JwtTokenUtilImpl implements JwtTokenUtil {
         }
     }
 
-    public String generateToken(UserPrincipal userPrincipal) throws ApiAccessException {
-        String key = userPrincipal.getUsername();
+    public String generateToken(PayloadDetails payloadDetails) throws ApiAccessException {
         String token = "";
         try {
             token = JWT.create()
-                    .withSubject(userPrincipal.getUserUniqueId()+":"
-                            +userPrincipal.getUsername()+":"
-                            +userPrincipal.getProfileName())
-                    .withIssuer(securityProperties.getIssuer())
-                    .sign(algorithmStrategy.getAlgorithm(securityProperties.getStrategy()));
+                    .withSubject(payloadDetails.getUsername()+":"
+                            +payloadDetails.getProfileName())
+                    .withIssuer(JWTSecurityProperties.getIssuer())
+                    .sign(algorithmStrategy.getAlgorithm(JWTSecurityProperties.getStrategy()));
         } catch (JWTCreationException | IllegalArgumentException exception) {
             //Invalid Signing configuration / Couldn't convert Claims.
             exception.printStackTrace();

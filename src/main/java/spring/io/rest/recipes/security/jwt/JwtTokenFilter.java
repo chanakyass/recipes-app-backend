@@ -62,10 +62,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             // Get user identity and set it on the spring security context
             String payload = jwtTokenUtil.getSubjectFromToken(token);
-            Long userId = Long.parseLong(payload.trim().split(":")[0]);
-            String email = payload.trim().split(":")[1];
+            String email = payload.trim().split(":")[0];
+            String profileName = payload.trim().split(":")[1];
 
-            User user = userService.getUserById(userId);
+            User user = userService.getUserByEmail(email);
 
             UserDetails userDetails = UserPrincipal.create(user);
 

@@ -75,7 +75,7 @@ class JwtTokenFilterTest {
 
     @Test
     void doFilterInternalFail_whenUserNotAvailable() throws ServletException, IOException {
-        when(userService.getUserById(anyLong())).thenThrow(ApiOperationException.class);
+        when(userService.getUserByEmail(anyString())).thenThrow(ApiOperationException.class);
         when(jwtTokenUtil.getSubjectFromToken(anyString())).thenReturn(1L +":"+payload+":"+payload);
         jwtTokenFilter.doFilter(request, response, mockChain);
         verify(exceptionHandler, times(1)).resolveException(any(MockHttpServletRequest.class), any(MockHttpServletResponse.class),

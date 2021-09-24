@@ -15,7 +15,6 @@ import spring.io.rest.recipes.services.dtos.entities.UserUpdateDto;
 import spring.io.rest.recipes.services.dtos.mappers.UserMapper;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +58,11 @@ public class UserService {
 
     public User getUserByEmail(String email) {
         return Optional.ofNullable(userRepository.findUserByEmail(email)).orElseThrow(() -> new ApiOperationException("No such user"));
+    }
+
+    public UserProxyDto getUserProxyByEmail(String email) {
+        User user = Optional.ofNullable(userRepository.findUserByEmail(email)).orElseThrow(() -> new ApiOperationException("No such user"));
+        return userMapper.toUserProxyDto(user);
     }
 
     @Transactional
