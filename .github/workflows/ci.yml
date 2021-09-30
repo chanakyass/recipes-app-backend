@@ -35,7 +35,8 @@ jobs:
           mkdir -p remote/new/jar/
           cp ./target/recipes-0.0.1-SNAPSHOT.jar remote/new/jar/
 
-      - uses: actions/upload-artifact@master
+      - name: upload
+        uses: actions/upload-artifact@master
         with:
           name: recipes-0.0.1-SNAPSHOT.jar
           path: remote/new/jar/
