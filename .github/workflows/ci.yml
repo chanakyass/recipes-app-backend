@@ -1,41 +1,30 @@
 name: CI
-
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
 jobs:
-#   build-and-test:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Install Java
-#         uses: actions/setup-java@v2
-#         with:
-#           java-version: '11'
-#           distribution: 'adopt'
-
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Package & verify
-#         run:  mvn verify
-#         env:
-#           ACTIVE_PROFILE: "dev"
-#           DEV_DBNAME: ${{secrets.DEV_DBNAME}}
-#           DEV_USERNAME: ${{secrets.DEV_USERNAME}}
-#           DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
-  docker:
+  build-and-test-and-deploy:
     runs-on: ubuntu-latest
-#     needs: build-and-test
     env:
       ACTIVE_PROFILE: "dev"
-      DEV_DBNAME: ${{secrets.DEV_DBNAME }}
+      DEV_DBNAME: ${{secrets.DEV_DBNAME}}
       DEV_USERNAME: ${{secrets.DEV_USERNAME}}
       DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
-      
     steps:
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Package & verify
+        run:  mvn package
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -43,12 +32,19 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: Login to DockerHub
-        run: |
-          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      - name: Print
+        run: |
+          echo ${{ github.event.repository.name }}
+          echo ${{ github.repository }}
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./
+          file: ./Dockerfile
           push: true
-          tags: ${{ github.event.repository.name }}:latest, ${{ github.repository }}:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
