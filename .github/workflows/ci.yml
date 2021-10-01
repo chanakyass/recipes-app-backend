@@ -25,7 +25,7 @@ jobs:
       - name: Test
         run: mvn test
 
-      - name: Package
+      - name: Package code
         run: mvn package
 
       - name: store jar in new dir
