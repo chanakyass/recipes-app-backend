@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-test-and-docker-image:
+  build-and-test:
     runs-on: ubuntu-latest
     env:
       ACTIVE_PROFILE: "dev"
