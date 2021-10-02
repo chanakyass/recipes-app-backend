@@ -124,11 +124,10 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy-docker-image-on-ec2:
-    needs: build
+    needs: push-docker-image-on-aws-ecr
     runs-on: ubuntu-latest
-
     steps:
-      - name: Deploy in EC2
+      - name: Login to EC2
         env:
           PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
           HOSTNAME : ${{ secrets.AWS_EC2_HOSTNAME  }}
