@@ -39,7 +39,7 @@ jobs:
           name: recipes-0.0.1-SNAPSHOT.jar
           path: remote/new/jar/
 
-  deploy-on-docker-hub:
+  push-docker-image-on-docker-hub:
     needs: build-and-test
     runs-on: ubuntu-latest
     env:
@@ -83,7 +83,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
 
-  deploy-on-aws-ecr:
+  push-docker-image-on-aws-ecr:
     needs: build-and-test
     runs-on: ubuntu-latest
     steps:
@@ -122,5 +122,39 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  deploy-docker-image-on-ec2:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy in EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
+          HOSTNAME : ${{ secrets.AWS_EC2_HOSTNAME  }}
+          USER_NAME : ${{ secrets.AWS_EC2_USERNAME  }}
+          PASSPHRASE: ${{secrets.AWS_EC2_PASSPHRASE}}
+
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key -p ${PASSPHRASE} ${USER_NAME}@${HOSTNAME}
+
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Pull docker image and run
+        run: |
+          docker pull 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
+          docker run -p 80:8080 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
+
 
 
