@@ -134,12 +134,20 @@ jobs:
     steps:
       - name: multiple command
         uses: appleboy/ssh-action@master
+        env:
+          ACTIVE_PROFILE: "dev"
+          DEV_DBNAME: ${{secrets.DEV_DBNAME}}
+          DEV_USERNAME: ${{secrets.DEV_USERNAME}}
+          DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
         with:
           host: ${{ secrets.AWS_EC2_HOSTNAME  }}
           username: ${{ secrets.AWS_EC2_USERNAME  }}
           key: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
           passphrase: ${{secrets.AWS_EC2_PASSPHRASE}}
           script: |
+            echo "hello"
+            echo $DEV_DBNAME
+            echo $ACTIVE_PROFILE
             sudo -i
             PASS=$(aws ecr get-login-password --region us-east-2)
             echo $PASS | docker login -u AWS --password-stdin  https://859198873575.dkr.ecr.us-east-2.amazonaws.com
