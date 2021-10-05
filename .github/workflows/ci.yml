@@ -142,6 +142,7 @@ jobs:
           script: |
             PASS=$(aws ecr get-login-password)
             echo $PASS | docker login -u AWS --password-stdin  https://859198873575.dkr.ecr.us-east-2.amazonaws.com
+            sudo -i
             docker pull 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
             docker run -p 80:8080 --env ACTIVE_PROFILE=$ACTIVE_PROFILE DEV_DBNAME=$DEV_DBNAME DEV_USERNAME=$DEV_USERNAME DEV_PASSWORD=$DEV_PASSWORD 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
         
