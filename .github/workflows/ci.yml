@@ -126,34 +126,25 @@ jobs:
   deploy-docker-image-on-ec2:
     needs: push-docker-image-on-aws-ecr
     runs-on: ubuntu-latest
+    env:
+      ACTIVE_PROFILE: "dev"
+      DEV_DBNAME: ${{secrets.DEV_DBNAME}}
+      DEV_USERNAME: ${{secrets.DEV_USERNAME}}
+      DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
     steps:
-      - name: Login to EC2
-        env:
-          PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
-          HOSTNAME : ${{ secrets.AWS_EC2_HOSTNAME  }}
-          USER_NAME : ${{ secrets.AWS_EC2_USERNAME  }}
-          PASSPHRASE: ${{secrets.AWS_EC2_PASSPHRASE}}
-
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key -p ${PASSPHRASE} ${USER_NAME}@${HOSTNAME}
-
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: multiple command
+        uses: appleboy/ssh-action@master
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Pull docker image and run
-        run: |
-          docker pull 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
-          docker run -p 80:8080 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
+          host: ${{ secrets.AWS_EC2_HOSTNAME  }}
+          username: ${{ secrets.AWS_EC2_USERNAME  }}
+          key: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
+          passphrase: ${{secrets.AWS_EC2_PASSPHRASE}}
+          script: |
+            PASS=$(aws ecr get-login-password)
+            echo $PASS | docker login -u AWS --password-stdin  https://859198873575.dkr.ecr.us-east-2.amazonaws.com
+            docker pull 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
+            docker run -p 80:8080 --env ACTIVE_PROFILE=$ACTIVE_PROFILE DEV_DBNAME=$DEV_DBNAME DEV_USERNAME=$DEV_USERNAME DEV_PASSWORD=$DEV_PASSWORD 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
+        
 
 
 
