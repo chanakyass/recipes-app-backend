@@ -30,22 +30,22 @@ jobs:
 
       - name: store jar and script in new dir
         run: |
-          mkdir -p remote/new/jar/
-          mkdir -p remote/new/scripts
-          cp ./target/recipes-0.0.1-SNAPSHOT.jar remote/new/jar/
-          cp ./scripts/dockerScript.sh remote/new/scripts/
+          mkdir -p ~/remote/new/jar/
+          mkdir -p ~/remote/new/scripts
+          cp ./target/recipes-0.0.1-SNAPSHOT.jar ~/remote/new/jar/
+          cp ./scripts/dockerScript.sh ~/remote/new/scripts/
 
       - name: upload
         uses: actions/upload-artifact@master
         with:
           name: recipes-0.0.1-SNAPSHOT.jar
-          path: remote/new/jar/
+          path: ~/remote/new/jar/
 
       - name: upload docker container script
         uses: actions/upload-artifact@master
         with:
           name: dockerScript.sh
-          path: remote/new/scripts/
+          path: ~/remote/new/scripts/
 
   push-docker-image-on-docker-hub:
     needs: build-and-test
@@ -58,7 +58,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: recipes-0.0.1-SNAPSHOT.jar
-          path: remote/new/jar/
+          path: ~/remote/new/jar/
 
       - name: Install Java
         uses: actions/setup-java@v2
@@ -97,7 +97,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: recipes-0.0.1-SNAPSHOT.jar
-          path: remote/new/jar/
+          path: ~/remote/new/jar/
 
       - name: Install Java
         uses: actions/setup-java@v2
@@ -147,7 +147,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: dockerScript.sh
-          path: remote/new/scripts/
+          path: ~/remote/new/scripts/
 
       - name: multiple command
         uses: appleboy/ssh-action@master
@@ -158,4 +158,4 @@ jobs:
           passphrase: ${{secrets.AWS_EC2_PASSPHRASE}}
           envs: ACTIVE_PROFILE,DEV_DBNAME,DEV_USERNAME,DEV_PASSWORD,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REDIRECT_URL,GIT_CLIENT_ID,GIT_CLIENT_SECRET,GIT_REDIRECT_URI,NORMAL_SECRET_KEY,NORMAL_PUBLIC_KEY,NORMAL_PRIVATE_KEY
           script: |
-            bash dockerScript.sh
+            bash ~/remote/new/scripts/dockerScript.sh
