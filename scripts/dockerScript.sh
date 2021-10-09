@@ -8,6 +8,7 @@ printenv | \
     printf "%s=%s\n" "$key" "$value" > env_vars.list
    fi
   done
+cat env_vars.list
 chmod 700 env_vars.list
 
 PASS=$(aws ecr get-login-password --region us-east-2)
