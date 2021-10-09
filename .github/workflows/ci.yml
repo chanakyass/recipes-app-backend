@@ -60,7 +60,6 @@ jobs:
     steps:
       - name: create new dir and checkout
         run: |
-            cd ~
             mkdir -p remote/new
             cd remote/new
 
@@ -108,7 +107,6 @@ jobs:
     steps:
       - name: create new dir and checkout
         run: |
-          cd ~
           mkdir -p remote/new
           cd remote/new
 
@@ -170,7 +168,6 @@ jobs:
     steps:
       - name: create new dir and checkout
         run: |
-          cd ~
           mkdir -p remote/new
           cd remote/new
 
@@ -179,6 +176,16 @@ jobs:
         with:
           name: dockerScript.sh
           path: .
+
+      - name: copy file via ssh key
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AWS_EC2_HOSTNAME }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
+          passphrase: ${{secrets.AWS_EC2_PASSPHRASE}}
+          source: "dockerScript.sh"
+          target: "scripts"
 
       - name: multiple command
         uses: appleboy/ssh-action@master
@@ -189,4 +196,4 @@ jobs:
           passphrase: ${{secrets.AWS_EC2_PASSPHRASE}}
           envs: ACTIVE_PROFILE,DEV_DBNAME,DEV_USERNAME,DEV_PASSWORD,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REDIRECT_URL,GIT_CLIENT_ID,GIT_CLIENT_SECRET,GIT_REDIRECT_URI,NORMAL_SECRET_KEY,NORMAL_PUBLIC_KEY,NORMAL_PRIVATE_KEY
           script: |
-            bash dockerScript.sh
+            bash scripts/dockerScript.sh
