@@ -1,6 +1,7 @@
 env_keys=("ACTIVE_PROFILE" "DEV_DBNAME" "DEV_USERNAME" "DEV_PASSWORD" "GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET" "GOOGLE_REDIRECT_URL" "GIT_CLIENT_ID" "GIT_CLIENT_SECRET" "GIT_REDIRECT_URI" "NORMAL_SECRET_KEY" "NORMAL_PUBLIC_KEY" "NORMAL_PRIVATE_KEY")
 touch env_vars.list
 echo "$ACTIVE_PROFILE"
+echo "$DEV_DBNAME"
 printenv | \
  while read -r line; do
    key=$(echo "$line" | cut -d "=" -f1)
