@@ -5,126 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-#  build-and-test:
-#    runs-on: ubuntu-latest
-#    env:
-#      ACTIVE_PROFILE: "dev"
-#      DEV_DBNAME: ${{secrets.DEV_DBNAME}}
-#      DEV_USERNAME: ${{secrets.DEV_USERNAME}}
-#      DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
-#    steps:
-#      - name: Install Java
-#        uses: actions/setup-java@v2
-#        with:
-#          java-version: '11'
-#          distribution: 'adopt'
-#
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Test
-#        run: mvn test
-#
-#      - name: Package code
-#        run: mvn package
-#
-#      - name: store jar in new dir
-#        run: |
-#          mkdir -p remote/new/jar/
-#          cp ./target/recipes-0.0.1-SNAPSHOT.jar remote/new/jar/
-#
-#      - name: upload
-#        uses: actions/upload-artifact@master
-#        with:
-#          name: recipes-0.0.1-SNAPSHOT.jar
-#          path: remote/new/jar/
-#
-#  push-docker-image-on-docker-hub:
-#    needs: build-and-test
-#    runs-on: ubuntu-latest
-#    env:
-#      ACTIVE_PROFILE: "dev"
-#      DEV_DBNAME: ${{secrets.DEV_DBNAME}}
-#      DEV_USERNAME: ${{secrets.DEV_USERNAME}}
-#      DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Download artifact
-#        uses: actions/download-artifact@master
-#        with:
-#          name: recipes-0.0.1-SNAPSHOT.jar
-#          path: remote/new/jar/
-#
-#      - name: Install Java
-#        uses: actions/setup-java@v2
-#        with:
-#          java-version: '11'
-#          distribution: 'adopt'
-#
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v1
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v1
-#
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v1
-#        with:
-#          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-#          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-#
-#      - name: Build and push to dockerhub
-#        uses: docker/build-push-action@v2
-#        with:
-#          context: ./
-#          file: ./Dockerfile
-#          push: true
-#          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
-#
-#  push-docker-image-on-aws-ecr:
-#    needs: build-and-test
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Download artifact
-#        uses: actions/download-artifact@master
-#        with:
-#          context: ./
-#          name: recipes-0.0.1-SNAPSHOT.jar
-#          path: remote/new/jar/
-#
-#      - name: Install Java
-#        uses: actions/setup-java@v2
-#        with:
-#          java-version: '11'
-#          distribution: 'adopt'
-#
-#      - name: Configure AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-2
-#
-#      - name: Login to Amazon ECR
-#        id: login-ecr
-#        uses: aws-actions/amazon-ecr-login@v1
-#
-#      - name: Build, tag, and push image to Amazon ECR
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: recipes-app-backend
-#          IMAGE_TAG: latest
-#        run: |
-#          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-  deploy-docker-image-on-ec2:
-#    needs: push-docker-image-on-aws-ecr
+  build-and-test:
     runs-on: ubuntu-latest
     env:
       ACTIVE_PROFILE: "dev"
@@ -132,6 +13,141 @@ jobs:
       DEV_USERNAME: ${{secrets.DEV_USERNAME}}
       DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
     steps:
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Test
+        run: mvn test
+
+      - name: Package code
+        run: mvn package
+
+      - name: store jar and script in new dir
+        run: |
+          mkdir -p remote/new/jar/
+          cp ./target/recipes-0.0.1-SNAPSHOT.jar remote/new/jar/
+          cp ./scripts/dockerScript.sh remote/new/scripts/
+
+      - name: upload
+        uses: actions/upload-artifact@master
+        with:
+          name: recipes-0.0.1-SNAPSHOT.jar
+          path: remote/new/jar/
+
+      - name: upload docker container script
+        uses: actions/upload-artifact@master
+        with:
+          name: dockerScript.sh
+          path: remote/new/scripts/
+
+  push-docker-image-on-docker-hub:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download artifact
+        uses: actions/download-artifact@master
+        with:
+          name: recipes-0.0.1-SNAPSHOT.jar
+          path: remote/new/jar/
+
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push to dockerhub
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
+
+  push-docker-image-on-aws-ecr:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download artifact
+        uses: actions/download-artifact@master
+        with:
+          name: recipes-0.0.1-SNAPSHOT.jar
+          path: remote/new/jar/
+
+      - name: Install Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: recipes-app-backend
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  deploy-docker-image-on-ec2:
+    needs: push-docker-image-on-aws-ecr
+    runs-on: ubuntu-latest
+    env:
+      ACTIVE_PROFILE: "dev"
+      DEV_DBNAME: ${{secrets.DEV_DBNAME}}
+      DEV_USERNAME: ${{secrets.DEV_USERNAME}}
+      DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
+      GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
+      GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
+      GOOGLE_REDIRECT_URL: ${{secrets.GOOGLE_REDIRECT_URL}}
+      GIT_CLIENT_ID: ${{secrets.GIT_CLIENT_ID}}
+      GIT_CLIENT_SECRET: ${{secrets.GIT_CLIENT_SECRET}}
+      GIT_REDIRECT_URI: ${{secrets.GIT_REDIRECT_URI}}
+      NORMAL_SECRET_KEY: ${{secrets.NORMAL_SECRET_KEY}}
+      NORMAL_PUBLIC_KEY: ${{secrets.NORMAL_PUBLIC_KEY}}
+      NORMAL_PRIVATE_KEY: ${{secrets.NORMAL_PRIVATE_KEY}}
+    steps:
+      - name: Download docker script
+        uses: actions/download-artifact@master
+        with:
+          name: dockerScript.sh
+          path: remote/new/scripts/
+
       - name: multiple command
         uses: appleboy/ssh-action@master
         with:
@@ -139,16 +155,6 @@ jobs:
           username: ${{ secrets.AWS_EC2_USERNAME  }}
           key: ${{ secrets.AWS_EC2_PRIVATE_KEY  }}
           passphrase: ${{secrets.AWS_EC2_PASSPHRASE}}
-          envs: ACTIVE_PROFILE,DEV_DBNAME,DEV_USERNAME,DEV_PASSWORD
+          envs: ACTIVE_PROFILE,DEV_DBNAME,DEV_USERNAME,DEV_PASSWORD,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REDIRECT_URL,GIT_CLIENT_ID,GIT_CLIENT_SECRET,GIT_REDIRECT_URI,NORMAL_SECRET_KEY,NORMAL_PUBLIC_KEY,NORMAL_PRIVATE_KEY
           script: |
-            sudo -i
-            PASS=$(aws ecr get-login-password --region us-east-2)
-            echo $PASS | docker login -u AWS --password-stdin  https://859198873575.dkr.ecr.us-east-2.amazonaws.com
-            docker pull 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
-            echo $DEV_DBNAME
-            echo $ACTIVE_PROFILE
-            docker run -p 80:8080 --env ACTIVE_PROFILE=$ACTIVE_PROFILE --env DEV_DBNAME=$DEV_DBNAME --env DEV_USERNAME=$DEV_USERNAME --env DEV_PASSWORD=$DEV_PASSWORD 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
-
-
-
-
+            bash dockerScript.sh
