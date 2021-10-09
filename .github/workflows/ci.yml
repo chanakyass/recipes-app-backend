@@ -67,7 +67,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: Dockerfile
-          path: scripts/
+          path: .
 
       - name: Download artifact
         uses: actions/download-artifact@master
@@ -96,7 +96,7 @@ jobs:
       - name: Build and push to dockerhub
         uses: docker/build-push-action@v2
         with:
-          context: ./scripts
+          context: .
           file: Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
@@ -114,7 +114,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: Dockerfile
-          path: scripts/
+          path: .
 
       - name: Download artifact
         uses: actions/download-artifact@master
@@ -145,7 +145,6 @@ jobs:
           ECR_REPOSITORY: recipes-app-backend
           IMAGE_TAG: latest
         run: |
-          cd scripts
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
@@ -176,7 +175,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: dockerScript.sh
-          path: scripts/
+          path: .
 
       - name: multiple command
         uses: appleboy/ssh-action@master
@@ -187,4 +186,4 @@ jobs:
           passphrase: ${{secrets.AWS_EC2_PASSPHRASE}}
           envs: ACTIVE_PROFILE,DEV_DBNAME,DEV_USERNAME,DEV_PASSWORD,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REDIRECT_URL,GIT_CLIENT_ID,GIT_CLIENT_SECRET,GIT_REDIRECT_URI,NORMAL_SECRET_KEY,NORMAL_PUBLIC_KEY,NORMAL_PRIVATE_KEY
           script: |
-            bash scripts/dockerScript.sh
+            bash dockerScript.sh
