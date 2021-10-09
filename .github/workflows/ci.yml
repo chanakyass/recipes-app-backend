@@ -7,149 +7,149 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    env:
-      ACTIVE_PROFILE: "dev"
-      DEV_DBNAME: ${{secrets.DEV_DBNAME}}
-      DEV_USERNAME: ${{secrets.DEV_USERNAME}}
-      DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
+#    env:
+#      ACTIVE_PROFILE: "dev"
+#      DEV_DBNAME: ${{secrets.DEV_DBNAME}}
+#      DEV_USERNAME: ${{secrets.DEV_USERNAME}}
+#      DEV_PASSWORD: ${{secrets.DEV_PASSWORD}}
     steps:
-      - name: Install Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
+#      - name: Install Java
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '11'
+#          distribution: 'adopt'
+#
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Test
-        run: mvn test
-
-      - name: Package code
-        run: mvn package
-
-      - name: store jar and script in new dir
-        run: |
-          mkdir -p ~/remote/new/jar/
-          mkdir -p ~/remote/new/scripts
-          cp ./target/recipes-0.0.1-SNAPSHOT.jar ~/remote/new/jar/
-          cp ./scripts/dockerScript.sh ~/remote/new/scripts/
-          cp ./Dockerfile ~/remote/new/scripts/
-
-      - name: upload
-        uses: actions/upload-artifact@master
-        with:
-          name: recipes-0.0.1-SNAPSHOT.jar
-          path: ~/remote/new/jar/
-
-      - name: upload docker container script
-        uses: actions/upload-artifact@master
-        with:
-          name: dockerScript.sh
-          path: ~/remote/new/scripts/
-
-      - name: upload Dockerfile
-        uses: actions/upload-artifact@master
-        with:
-          name: Dockerfile
-          path: ~/remote/new/scripts/
-
-  push-docker-image-on-docker-hub:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: create new dir and checkout
-        run: |
-            mkdir -p remote/new
-            cd remote/new
-
-      - name: Download Dockerfile
-        uses: actions/download-artifact@master
-        with:
-          name: Dockerfile
-          path: .
-
-      - name: Download artifact
-        uses: actions/download-artifact@master
-        with:
-          name: recipes-0.0.1-SNAPSHOT.jar
-          path: jar/
-
-      - name: Install Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      - name: Build and push to dockerhub
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
-
-  push-docker-image-on-aws-ecr:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: create new dir and checkout
-        run: |
-          mkdir -p remote/new
-          cd remote/new
-
-      - name: Download Dockerfile
-        uses: actions/download-artifact@master
-        with:
-          name: Dockerfile
-          path: .
-
-      - name: Download artifact
-        uses: actions/download-artifact@master
-        with:
-          name: recipes-0.0.1-SNAPSHOT.jar
-          path: jar/
-
-      - name: Install Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: recipes-app-backend
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#
+#      - name: Test
+#        run: mvn test
+#
+#      - name: Package code
+#        run: mvn package
+#
+#      - name: store jar and script in new dir
+#        run: |
+#          mkdir -p ~/remote/new/jar/
+#          mkdir -p ~/remote/new/scripts
+#          cp ./target/recipes-0.0.1-SNAPSHOT.jar ~/remote/new/jar/
+#          cp ./scripts/dockerScript.sh ~/remote/new/scripts/
+#          cp ./Dockerfile ~/remote/new/scripts/
+#
+#      - name: upload
+#        uses: actions/upload-artifact@master
+#        with:
+#          name: recipes-0.0.1-SNAPSHOT.jar
+#          path: ~/remote/new/jar/
+#
+#      - name: upload docker container script
+#        uses: actions/upload-artifact@master
+#        with:
+#          name: dockerScript.sh
+#          path: ~/remote/new/scripts/
+#
+#      - name: upload Dockerfile
+#        uses: actions/upload-artifact@master
+#        with:
+#          name: Dockerfile
+#          path: ~/remote/new/scripts/
+#
+#  push-docker-image-on-docker-hub:
+#    needs: build-and-test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: create new dir and checkout
+#        run: |
+#            mkdir -p remote/new
+#            cd remote/new
+#
+#      - name: Download Dockerfile
+#        uses: actions/download-artifact@master
+#        with:
+#          name: Dockerfile
+#          path: .
+#
+#      - name: Download artifact
+#        uses: actions/download-artifact@master
+#        with:
+#          name: recipes-0.0.1-SNAPSHOT.jar
+#          path: jar/
+#
+#      - name: Install Java
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '11'
+#          distribution: 'adopt'
+#
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v1
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v1
+#
+#      - name: Login to DockerHub
+#        uses: docker/login-action@v1
+#        with:
+#          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+#          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+#
+#      - name: Build and push to dockerhub
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: .
+#          file: Dockerfile
+#          push: true
+#          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
+#
+#  push-docker-image-on-aws-ecr:
+#    needs: build-and-test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: create new dir and checkout
+#        run: |
+#          mkdir -p remote/new
+#          cd remote/new
+#
+#      - name: Download Dockerfile
+#        uses: actions/download-artifact@master
+#        with:
+#          name: Dockerfile
+#          path: .
+#
+#      - name: Download artifact
+#        uses: actions/download-artifact@master
+#        with:
+#          name: recipes-0.0.1-SNAPSHOT.jar
+#          path: jar/
+#
+#      - name: Install Java
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '11'
+#          distribution: 'adopt'
+#
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-2
+#
+#      - name: Login to Amazon ECR
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
+#
+#      - name: Build, tag, and push image to Amazon ECR
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: recipes-app-backend
+#          IMAGE_TAG: latest
+#        run: |
+#          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy-docker-image-on-ec2:
-    needs: push-docker-image-on-aws-ecr
+    needs: build-and-test
     runs-on: ubuntu-latest
     env:
       ACTIVE_PROFILE: "dev"
