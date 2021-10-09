@@ -31,6 +31,7 @@ jobs:
       - name: store jar and script in new dir
         run: |
           mkdir -p remote/new/jar/
+          mkdir -p remote/new/scripts
           cp ./target/recipes-0.0.1-SNAPSHOT.jar remote/new/jar/
           cp ./scripts/dockerScript.sh remote/new/scripts/
 
