@@ -28,11 +28,17 @@ jobs:
 #      - name: Package code
 #        run: mvn package
 #
+#      - name: store jar and script in new dir
+#        run: |
+#          mkdir -p ~/remote/new/jar/
+#          mkdir -p ~/remote/new/scripts
+#          cp ./target/recipes-0.0.1-SNAPSHOT.jar ~/remote/new/jar/
+#          cp ./scripts/dockerScript.sh ~/remote/new/scripts/
+#          cp ./Dockerfile ~/remote/new/scripts/
+
       - name: store jar and script in new dir
         run: |
-#          mkdir -p ~/remote/new/jar/
           mkdir -p ~/remote/new/scripts
-#          cp ./target/recipes-0.0.1-SNAPSHOT.jar ~/remote/new/jar/
           cp ./scripts/dockerScript.sh ~/remote/new/scripts/
           cp ./Dockerfile ~/remote/new/scripts/
 
