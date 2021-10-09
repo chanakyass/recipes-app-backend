@@ -60,6 +60,7 @@ jobs:
     steps:
       - name: create new dir and checkout
         run: |
+            cd ~
             mkdir -p remote/new
             cd remote/new
 
@@ -107,6 +108,7 @@ jobs:
     steps:
       - name: create new dir and checkout
         run: |
+          cd ~
           mkdir -p remote/new
           cd remote/new
 
@@ -168,6 +170,7 @@ jobs:
     steps:
       - name: create new dir and checkout
         run: |
+          cd ~
           mkdir -p remote/new
           cd remote/new
 
