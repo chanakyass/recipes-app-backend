@@ -150,7 +150,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy-docker-image-on-ec2:
-    needs: build-and-test
+    needs: push-docker-image-on-aws-ecr
     runs-on: ubuntu-latest
     env:
       ACTIVE_PROFILE: "dev"
