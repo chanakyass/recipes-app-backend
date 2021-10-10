@@ -3,12 +3,14 @@ touch env_vars.list
 cp /dev/null env_vars.list
 compareString=" ${env_keys[*]} "
 compareString=${compareString//" "/"|"}
+echo "$compareString"
 printenv | \
  while read -r line; do
    key=$(echo "$line" | cut -d "=" -f1)
    manipulatedKey="|$key|"
+   echo "$manipulatedKey"
    value=$(echo "$line" | cut -d "=" -f2)
-   if [[ "${compareString}" =~ $manipulatedKey ]]; then
+   if [[ "${compareString}" =~ "${manipulatedKey}" ]]; then
      printf "%s=%s\n" "$key" "$value" >> env_vars.list
    fi
   done
