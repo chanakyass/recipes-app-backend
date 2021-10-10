@@ -5,8 +5,8 @@ printenv | \
  while read -r line; do
    key=$(echo "$line" | cut -d "=" -f1)
    value=$(echo "$line" | cut -d "=" -f2)
-   if [[ "${env_keys[*]}" =~ $key ]]; then
-    printf "%s=%s\n" "$key" "$value" > env_vars.list
+   if [[ "${env_keys[*]}" == "$key" ]]; then
+    printf "%s=%s\n" "$key" "$value" >> env_vars.list
    fi
   done
 cat env_vars.list

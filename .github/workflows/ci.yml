@@ -204,6 +204,7 @@ jobs:
           script: |
             export ACTIVE_PROFILE=$ACTIVE_PROFILE
             export DEV_DBNAME=$DEV_DBNAME
+            export DEV_USERNAME=$DEV_USERNAME
             export DEV_PASSWORD=$DEV_PASSWORD
             export GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
             export GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
