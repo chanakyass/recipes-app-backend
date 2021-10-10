@@ -4,7 +4,6 @@ printenv | \
  while read -r line; do
    key=$(echo "$line" | cut -d "=" -f1)
    value=$(echo "$line" | cut -d "=" -f2)
-   echo "$key"
    if [[ "${env_keys[*]}" =~ $key ]]; then
      echo "match"
     printf "%s=%s\n" "$key" "$value" >> env_vars.list
