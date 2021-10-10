@@ -1,15 +1,18 @@
 env_keys=("ACTIVE_PROFILE" "DEV_DBNAME" "DEV_USERNAME" "DEV_PASSWORD" "GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET" "GOOGLE_REDIRECT_URL" "GIT_CLIENT_ID" "GIT_CLIENT_SECRET" "GIT_REDIRECT_URI" "NORMAL_SECRET_KEY" "NORMAL_PUBLIC_KEY" "NORMAL_PRIVATE_KEY")
 touch env_vars.list
+cp /dev/null env_vars.list
+compareString=" ${env_keys[*]} "
+compareString=${compareString/" "/"|"}
+echo "$compareString"
 printenv | \
  while read -r line; do
    key=$(echo "$line" | cut -d "=" -f1)
+   manipulatedKey="|$key|"
    value=$(echo "$line" | cut -d "=" -f2)
-   if [[ "${env_keys[*]}" =~ "${key}" ]]; then
-     echo "match"
+   if [[ "${compareString}" =~ $manipulatedKey ]]; then
      printf "%s=%s\n" "$key" "$value" >> env_vars.list
    fi
   done
-cat env_vars.list
 chmod 700 env_vars.list
 
 PASS=$(aws ecr get-login-password --region us-east-2)
