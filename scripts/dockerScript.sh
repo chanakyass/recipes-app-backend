@@ -2,8 +2,7 @@ env_keys=("ACTIVE_PROFILE" "DEV_DBNAME" "DEV_USERNAME" "DEV_PASSWORD" "GOOGLE_CL
 touch env_vars.list
 cp /dev/null env_vars.list
 compareString=" ${env_keys[*]} "
-compareString=${compareString/" "/"|"}
-echo "$compareString"
+compareString=${compareString//" "/"|"}
 printenv | \
  while read -r line; do
    key=$(echo "$line" | cut -d "=" -f1)
