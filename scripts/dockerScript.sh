@@ -1,11 +1,12 @@
 env_keys=("ACTIVE_PROFILE" "DEV_DBNAME" "DEV_USERNAME" "DEV_PASSWORD" "GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET" "GOOGLE_REDIRECT_URL" "GIT_CLIENT_ID" "GIT_CLIENT_SECRET" "GIT_REDIRECT_URI" "NORMAL_SECRET_KEY" "NORMAL_PUBLIC_KEY" "NORMAL_PRIVATE_KEY")
 touch env_vars.list
-printenv
 printenv | \
  while read -r line; do
    key=$(echo "$line" | cut -d "=" -f1)
    value=$(echo "$line" | cut -d "=" -f2)
-   if [[ "${env_keys[*]}" == "$key" ]]; then
+   echo "$key"
+   if [[ "${env_keys[*]}" =~ $key ]]; then
+     echo "match"
     printf "%s=%s\n" "$key" "$value" >> env_vars.list
    fi
   done
