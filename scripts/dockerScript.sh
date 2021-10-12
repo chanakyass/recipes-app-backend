@@ -19,7 +19,7 @@ chmod 700 env_vars.list
 PASS=$(aws ecr get-login-password --region us-east-2)
 echo "$PASS" | docker login -u AWS --password-stdin  https://859198873575.dkr.ecr.us-east-2.amazonaws.com
 docker pull 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest
-CONTAINER_ID=$(docker run -d -p 80:8080 --env-file env_vars.list 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest)
+CONTAINER_ID=$(sudo docker run -d -p 80:8080 --env-file env_vars.list 859198873575.dkr.ecr.us-east-2.amazonaws.com/recipes-app-backend:latest)
 echo "Please wait until docker health check is complete"
 sleep 10
 if ! docker top "$CONTAINER_ID" &>/dev/null

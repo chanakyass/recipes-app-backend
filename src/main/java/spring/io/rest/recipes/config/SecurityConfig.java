@@ -131,6 +131,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-resources/**", "/webjars/**", "/swagger-ui.html", "/swagger-ui.html/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .addFilterBefore( jwtTokenFilter, UsernamePasswordAuthenticationFilter.class )
                 .oauth2Login()
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorize")
@@ -144,8 +145,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .successHandler( oAuth2AuthenticationSuccessHandler )
                 .failureHandler(oAuth2AuthenticationFailureHandler);
-        http.headers().frameOptions().disable();
-        http.addFilterBefore( jwtTokenFilter, UsernamePasswordAuthenticationFilter.class );
+                http.headers().frameOptions().disable();;
     }
 
     @Bean
