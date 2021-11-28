@@ -17,7 +17,7 @@ printenv | \
 chmod 700 env_vars.list
 
 PASS=$DOCKER_HUB_PASSWORD
-echo "$PASS" | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin
+echo "$PASS" | docker login --username=${DOCKER_HUB_USERNAME} --password-stdin
 docker pull ${DOCKER_HUB_USERNAME}/recipes-app-backend:latest
 CONTAINER_ID=$(docker run -d -p 80:8080 --env-file env_vars.list ${DOCKER_HUB_USERNAME}/recipes-app-backend:latest)
 echo "Please wait until docker health check is complete"
