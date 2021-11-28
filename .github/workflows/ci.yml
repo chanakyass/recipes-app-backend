@@ -102,55 +102,55 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
 
-  push-docker-image-on-aws-ecr:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: create new dir and checkout
-        run: |
-          mkdir -p remote/new
-          cd remote/new
+#   push-docker-image-on-aws-ecr:
+#     needs: build-and-test
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: create new dir and checkout
+#         run: |
+#           mkdir -p remote/new
+#           cd remote/new
 
-      - name: Download Dockerfile
-        uses: actions/download-artifact@master
-        with:
-          name: Dockerfile
-          path: .
+#       - name: Download Dockerfile
+#         uses: actions/download-artifact@master
+#         with:
+#           name: Dockerfile
+#           path: .
 
-      - name: Download artifact
-        uses: actions/download-artifact@master
-        with:
-          name: recipes-0.0.1-SNAPSHOT.jar
-          path: jar/
+#       - name: Download artifact
+#         uses: actions/download-artifact@master
+#         with:
+#           name: recipes-0.0.1-SNAPSHOT.jar
+#           path: jar/
 
-      - name: Install Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'adopt'
+#       - name: Install Java
+#         uses: actions/setup-java@v2
+#         with:
+#           java-version: '11'
+#           distribution: 'adopt'
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-2
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+#       - name: Login to Amazon ECR
+#         id: login-ecr
+#         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: recipes-app-backend
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#       - name: Build, tag, and push image to Amazon ECR
+#         env:
+#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#           ECR_REPOSITORY: recipes-app-backend
+#           IMAGE_TAG: latest
+#         run: |
+#           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy-docker-image-on-ec2:
-    needs: push-docker-image-on-aws-ecr
+    needs:   push-docker-image-on-docker-hub
     runs-on: ubuntu-latest
     env:
       ACTIVE_PROFILE: "dev"
@@ -166,6 +166,8 @@ jobs:
       NORMAL_SECRET_KEY: ${{secrets.NORMAL_SECRET_KEY}}
       NORMAL_PUBLIC_KEY: ${{secrets.NORMAL_PUBLIC_KEY}}
       NORMAL_PRIVATE_KEY: ${{secrets.NORMAL_PRIVATE_KEY}}
+      DOCKER_HUB_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
+      DOCKER_HUB_PASSWORD: ${{secrets.DOCKER_HUB_PASSWORD}}
     steps:
       - name: create new dir and checkout
         run: |
@@ -210,4 +212,6 @@ jobs:
             export NORMAL_SECRET_KEY=$NORMAL_SECRET_KEY
             export NORMAL_PUBLIC_KEY=$NORMAL_PUBLIC_KEY
             export NORMAL_PRIVATE_KEY=$NORMAL_PRIVATE_KEY
+            export DOCKER_HUB_USERNAME=$DOCKER_HUB_USERNAME
+            export DOCKER_HUB_PASSWORD=$DOCKER_HUB_PASSWORD
             bash scripts/dockerScript.sh
