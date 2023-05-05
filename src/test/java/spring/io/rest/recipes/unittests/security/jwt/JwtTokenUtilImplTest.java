@@ -10,13 +10,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
-import spring.io.rest.recipes.config.JWTSecurityProperties;
+import spring.io.rest.recipes.config.JWTServiceProperties;
 import spring.io.rest.recipes.enums.Strategy;
 import spring.io.rest.recipes.exceptions.ApiAccessException;
 import spring.io.rest.recipes.models.entities.User;
 import spring.io.rest.recipes.security.PayloadDetails;
 import spring.io.rest.recipes.security.UserPrincipal;
 import spring.io.rest.recipes.security.jwt.AlgorithmStrategy;
+import spring.io.rest.recipes.config.JWTSecurityProperties;
 import spring.io.rest.recipes.security.jwt.JwtTokenUtilImpl;
 import spring.io.rest.recipes.unittests.data.AbstractTestDataFactory;
 import spring.io.rest.recipes.unittests.data.UserTestDataFactory;
@@ -29,7 +30,7 @@ class JwtTokenUtilImplTest {
     @Mock
     private AlgorithmStrategy algorithmStrategy;
     @Mock
-    private JWTSecurityProperties JWTSecurityProperties;
+    private JWTServiceProperties jwtTokenSecurityProperties;
 
     @InjectMocks
     private JwtTokenUtilImpl jwtTokenUtil;
@@ -43,7 +44,7 @@ class JwtTokenUtilImplTest {
     void validateFail() {
         Algorithm algorithm = Mockito.mock(Algorithm.class);
         Strategy strategy = Strategy.AUTO;
-        when(JWTSecurityProperties.getStrategy()).thenReturn(strategy);
+        when(jwtTokenSecurityProperties.getStrategy()).thenReturn(strategy);
         when(algorithmStrategy.getAlgorithm(any(Strategy.class))).thenReturn(algorithm);
         String random= "xyz";
         assertThrows(ApiAccessException.class, () -> jwtTokenUtil.validate(random));
@@ -53,7 +54,7 @@ class JwtTokenUtilImplTest {
     void validateFail_DueToInvalidToken() {
         Algorithm algorithm = Algorithm.HMAC256("RANDOM_SECRET");
         Strategy strategy = Strategy.AUTO;
-        when(JWTSecurityProperties.getStrategy()).thenReturn(strategy);
+        when(jwtTokenSecurityProperties.getStrategy()).thenReturn(strategy);
         when(algorithmStrategy.getAlgorithm(any(Strategy.class))).thenReturn(algorithm);
         String random = "xyz";
         assertThrows(ApiAccessException.class, () -> jwtTokenUtil.validate(random));
@@ -61,9 +62,9 @@ class JwtTokenUtilImplTest {
 
     @Test
     void generateTokenPass() {
-        when(JWTSecurityProperties.getStrategy()).thenReturn(Strategy.AUTO);
+        when(jwtTokenSecurityProperties.getStrategy()).thenReturn(Strategy.AUTO);
         when(algorithmStrategy.getAlgorithm(any(Strategy.class))).thenReturn(Algorithm.HMAC256("RANDOM_SECRET"));
-        when(JWTSecurityProperties.getIssuer()).thenReturn("RANDOM_ISSUER");
+        when(jwtTokenSecurityProperties.getIssuer()).thenReturn("RANDOM_ISSUER");
         UserTestDataFactory userTestDataFactory = AbstractTestDataFactory.getUserTestDataFactory();
         User user = userTestDataFactory.getRandomUser();
         UserPrincipal userPrincipal = UserPrincipal.create(user);
@@ -74,9 +75,9 @@ class JwtTokenUtilImplTest {
     @Test
     void generateTokenFail() {
         Algorithm algorithm = null;
-        when(JWTSecurityProperties.getStrategy()).thenReturn(Strategy.ASYMMETRIC_ENCRYPTION);
+        when(jwtTokenSecurityProperties.getStrategy()).thenReturn(Strategy.ASYMMETRIC_ENCRYPTION);
         when(algorithmStrategy.getAlgorithm(any(Strategy.class))).thenReturn(algorithm);
-        when(JWTSecurityProperties.getIssuer()).thenReturn("RANDOM_ISSUER");
+        when(jwtTokenSecurityProperties.getIssuer()).thenReturn("RANDOM_ISSUER");
         UserTestDataFactory userTestDataFactory = AbstractTestDataFactory.getUserTestDataFactory();
         User user = userTestDataFactory.getRandomUser();
         UserPrincipal userPrincipal = UserPrincipal.create(user);
@@ -92,7 +93,7 @@ class JwtTokenUtilImplTest {
     @Test
     void extractTokenAndGetSubject() {
         MockHttpServletRequest request = Mockito.mock(MockHttpServletRequest.class);
-        JwtTokenUtilImpl jwtTokenUtil1 = Mockito.spy(new JwtTokenUtilImpl(JWTSecurityProperties, algorithmStrategy));
+        JwtTokenUtilImpl jwtTokenUtil1 = Mockito.spy(new JwtTokenUtilImpl(jwtTokenSecurityProperties));
         doReturn("xyz").when(jwtTokenUtil1).extractToken(request);
         doReturn("xyz").when(jwtTokenUtil1).getSubjectFromToken(anyString());
         assertEquals(jwtTokenUtil1.extractTokenAndGetSubject(request), "xyz");

@@ -10,7 +10,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-@Component
+
 public class KeyGenerator {
     public RSAPrivateKey getPrivateKeyFromString(String key) throws GeneralSecurityException {
         byte[] encoded = Base64.decodeBase64(key);

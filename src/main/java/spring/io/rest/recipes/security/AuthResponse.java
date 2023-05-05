@@ -12,8 +12,18 @@ import spring.io.rest.recipes.services.dtos.entities.UserProxyDto;
 public class AuthResponse {
     private UserProxyDto user;
     private String jwtToken;
+    private String refreshToken;
+
+    public AuthResponse(UserProxyDto user, String jwtToken) {
+        this.user = user;
+        this.jwtToken = jwtToken;
+    }
 
     public static AuthResponse mapUserToAuthResponse(User user, String jwtToken) {
         return new AuthResponse(new UserProxyDto(user.getId(), user.getFullName().getFirstName(), user.getFullName().getMiddleName(), user.getFullName().getLastName(), user.getProfileName(), user.getEmail(), user.getUserSummary(), user.getDob()), jwtToken);
+    }
+
+    public static AuthResponse mapUserToAuthResponse(User user, String jwtToken, String refreshToken) {
+        return new AuthResponse(new UserProxyDto(user.getId(), user.getFullName().getFirstName(), user.getFullName().getMiddleName(), user.getFullName().getLastName(), user.getProfileName(), user.getEmail(), user.getUserSummary(), user.getDob()), jwtToken, refreshToken);
     }
 }

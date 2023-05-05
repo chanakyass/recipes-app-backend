@@ -1,25 +1,26 @@
 package spring.io.rest.recipes.config;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import spring.io.rest.recipes.enums.Strategy;
-
-@ConfigurationProperties("app.security.jwt")
-@Setter
-@Getter
+import org.springframework.context.annotation.Configuration;
+@Configuration
 public class JWTSecurityProperties {
+    @Bean("accessTokenProps")
+    @ConfigurationProperties("app.security.jwt.access")
+    public JWTServiceProperties accessTokenProps() {
+        return new JWTServiceProperties();
+    }
 
-    private String issuer;
-    private Strategy strategy;
-    private String secretKey;
-    private String publicKey;
-    private String privateKey;
+    @Bean("refreshTokenProps")
+    @ConfigurationProperties("app.security.jwt.refresh")
+    public JWTServiceProperties refreshTokenProps() {
+        return new JWTServiceProperties();
+    }
 
-    @Bean("securityProperties")
-    public static PropertySourcesPlaceholderConfigurer properties() {
-        return new PropertySourcesPlaceholderConfigurer();
+    public JWTServiceProperties getTokenPropsFor(String tokenType) {
+        if (tokenType.equals("ACCESS_TOKEN")) {
+            return accessTokenProps();
+        }
+        return refreshTokenProps();
     }
 }

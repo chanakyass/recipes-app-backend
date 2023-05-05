@@ -6,35 +6,29 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
-import spring.io.rest.recipes.config.JWTSecurityProperties;
+import spring.io.rest.recipes.config.JWTServiceProperties;
 import spring.io.rest.recipes.exceptions.ApiAccessException;
 import spring.io.rest.recipes.security.PayloadDetails;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-@Component
-@EnableConfigurationProperties(JWTSecurityProperties.class)
 public class JwtTokenUtilImpl implements JwtTokenUtil {
 
-    private final JWTSecurityProperties JWTSecurityProperties;
+    private final JWTServiceProperties jwtServiceProperties;
     private final AlgorithmStrategy algorithmStrategy;
 
-    @Autowired
-    public JwtTokenUtilImpl(JWTSecurityProperties JWTSecurityProperties, AlgorithmStrategy algorithmStrategy) {
-        this.JWTSecurityProperties = JWTSecurityProperties;
-        this.algorithmStrategy = algorithmStrategy;
+    public JwtTokenUtilImpl(JWTServiceProperties jwtServiceProperties) {
+        this.jwtServiceProperties = jwtServiceProperties;
+        this.algorithmStrategy = new AlgorithmStrategy(jwtServiceProperties, new KeyGenerator());
     }
 
     @Override
     public void validate(String token) throws ApiAccessException {
         try {
-            JWTVerifier verifier = JWT.require(algorithmStrategy.getAlgorithm(JWTSecurityProperties.getStrategy()))
-                    .withIssuer(JWTSecurityProperties.getIssuer())
+            JWTVerifier verifier = JWT.require(algorithmStrategy.getAlgorithm(jwtServiceProperties.getStrategy()))
+                    .withIssuer(jwtServiceProperties.getIssuer())
                     .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
         }
@@ -49,8 +43,8 @@ public class JwtTokenUtilImpl implements JwtTokenUtil {
             token = JWT.create()
                     .withSubject(payloadDetails.getUsername()+":"
                             +payloadDetails.getProfileName())
-                    .withIssuer(JWTSecurityProperties.getIssuer())
-                    .sign(algorithmStrategy.getAlgorithm(JWTSecurityProperties.getStrategy()));
+                    .withIssuer(jwtServiceProperties.getIssuer())
+                    .sign(algorithmStrategy.getAlgorithm(jwtServiceProperties.getStrategy()));
         } catch (JWTCreationException | IllegalArgumentException exception) {
             //Invalid Signing configuration / Couldn't convert Claims.
             exception.printStackTrace();
