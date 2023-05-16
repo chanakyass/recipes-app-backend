@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import spring.io.rest.recipes.enums.ItemType;
+import spring.io.rest.recipes.enums.MealType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +26,10 @@ public class RecipeDto {
     private String description;
     private LocalDateTime createdOn;
     private ItemType itemType;
+    private MealType mealType;
     private Integer serving;
+    private String cuisine;
+    private String course;
     private String recipeImageAddress;
     private String cookingInstructions;
     private List<RecipeIngredientDto> recipeIngredients;

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
 import org.hibernate.Hibernate;
 import spring.io.rest.recipes.enums.ItemType;
+import spring.io.rest.recipes.enums.MealType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -30,7 +31,10 @@ public class Recipe {
     private LocalDateTime createdOn;
     @Enumerated(value = EnumType.ORDINAL)
     private ItemType itemType;
+    private MealType mealType;
     private Integer serving;
+    private String cuisine;
+    private String course;
     private String recipeImageAddress;
     @Column(length = 65536)
     private String cookingInstructions;

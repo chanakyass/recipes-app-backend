@@ -1,6 +1,7 @@
 package spring.io.rest.recipes.unittests.data;
 
 import spring.io.rest.recipes.enums.ItemType;
+import spring.io.rest.recipes.enums.MealType;
 import spring.io.rest.recipes.enums.UnitOfMeasurement;
 import spring.io.rest.recipes.models.entities.Recipe;
 import spring.io.rest.recipes.models.entities.RecipeIngredient;
@@ -22,7 +23,7 @@ public class RecipeTestDataFactory {
     }
 
     public Recipe getRandomRecipe(Long id) {
-        Recipe recipe = new Recipe(id, "Paneer Tikka", "Punjabi food", LocalDateTime.now(), ItemType.VEG, 4, "random_address", "Random instructions",
+        Recipe recipe = new Recipe(id, "Paneer Tikka", "Punjabi food", LocalDateTime.now(), ItemType.VEG, MealType.LUNCH, 4, "Punjabi", "Curry", "random_address", "Random instructions",
                 new ArrayList<>(List.of(
                         new RecipeIngredient(1L, null, ingredientTestDataFactory.getRandomIngredient(1L), 10.0, UnitOfMeasurement.GRAMS),
                         new RecipeIngredient(2L, null, ingredientTestDataFactory.getRandomIngredient(2L), 250.0, UnitOfMeasurement.MILLILITRES ))
@@ -43,7 +44,7 @@ public class RecipeTestDataFactory {
                     recipeIngredient.getQuantity(), recipeIngredient.getUom()));
         }
         return new RecipeDto(recipe.getId(), recipe.getName(), recipe.getDescription(), recipe.getCreatedOn(), recipe.getItemType()
-        , recipe.getServing(), recipe.getRecipeImageAddress(), recipe.getCookingInstructions(), recipeIngredientDtoList, userTestDataFactory.getRandomUserProxyDto());
+        , recipe.getMealType(), recipe.getServing(), recipe.getCuisine(), recipe.getCourse(), recipe.getRecipeImageAddress(), recipe.getCookingInstructions(), recipeIngredientDtoList, userTestDataFactory.getRandomUserProxyDto());
     }
 
     public List<Recipe> getRandomRecipeList() {
