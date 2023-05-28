@@ -50,6 +50,12 @@ public class RecipesController {
         return ResponseEntity.ok().body(recipeDtoList);
     }
 
+    @GetMapping(value = "recipes", params = "searchString")
+    public ResponseEntity<List<RecipeDto>> getRecipesWith(@RequestParam("searchString") String searchStr){
+        List<RecipeDto> recipeDtoList = recipeCRUDServices.getAllRecipesWith(searchStr);
+        return ResponseEntity.ok().body(recipeDtoList);
+    }
+
     @GetMapping("recipe/{recipeId}")
     public ResponseEntity<RecipeDto> getRecipe(@PathVariable("recipeId") Long recipeId){
         return ResponseEntity.ok().body(recipeCRUDServices.getRecipeWithId(recipeId));

@@ -6769,3 +6769,16 @@ Caused by: org.h2.jdbc.JdbcSQLInvalidAuthorizationSpecException: Wrong user name
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:461)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
 	... 159 more
+2023-05-28 23:50:25 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM RECIPES 
+INSERT INTO[*] RECIPE_CATEGORIES VALUES(3160, 'Curry')"; SQL statement:
+SELECT * FROM RECIPES 
+insert into recipe_categories values(3160, 'Curry') [42000-200]
+2023-05-28 23:50:55 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM RECIPES 
+INSERT INTO[*] RECIPE_CATEGORIES VALUES (3160, 'Curry')"; SQL statement:
+SELECT * FROM RECIPES 
+insert into recipe_categories values (3160, 'Curry') [42000-200]
+2023-05-28 23:51:34 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "RECIPES_CATEGORIES" not found; SQL statement:
+SELECT * FROM RECIPES_CATEGORIES [42102-200]

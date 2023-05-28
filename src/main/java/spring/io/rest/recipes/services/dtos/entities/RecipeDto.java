@@ -26,10 +26,10 @@ public class RecipeDto {
     private String description;
     private LocalDateTime createdOn;
     private ItemType itemType;
-    private MealType mealType;
+    private List<MealType> mealTypes;
     private Integer serving;
-    private String cuisine;
-    private String course;
+    private List<String> cuisines;
+    private List<String> dishCategories;
     private String recipeImageAddress;
     private String cookingInstructions;
     private List<RecipeIngredientDto> recipeIngredients;

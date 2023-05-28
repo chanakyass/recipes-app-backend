@@ -17,6 +17,7 @@ import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 @Mapper(componentModel = "spring", uses = IngredientMapper.class)
 public abstract class RecipeIngredientMapper {
 
+    public abstract List<RecipeIngredientDto> toRecipeIngredientDtoList(List<RecipeIngredient> recipeIngredients);
     @Mapping(target = "recipe", ignore = true)
     public abstract RecipeIngredient toRecipeIngredient(RecipeIngredientDto recipeIngredientDto);
     public abstract RecipeIngredientDto toRecipeIngredientDto(RecipeIngredient recipeIngredient);

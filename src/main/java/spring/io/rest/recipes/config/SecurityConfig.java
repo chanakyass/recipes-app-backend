@@ -63,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors().and().csrf().disable()
+                .headers().frameOptions().sameOrigin().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling()
                 .and().anonymous().and()
@@ -70,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .anyRequest().permitAll()
 //                .and().addFilter(corsFilter());
                 .antMatchers("/").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/h2-console/**", "/h2-console", "/").permitAll()
                 .antMatchers(uriPrefix+"/public/**").permitAll()
                 .antMatchers(uriPrefix+"/admin/**")
                                         .access("hasIpAddress('"+adminIp4Address+"') or hasIpAddress('"+adminIp6Address+"')")
