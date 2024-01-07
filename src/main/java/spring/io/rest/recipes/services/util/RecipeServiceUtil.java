@@ -50,6 +50,9 @@ public class RecipeServiceUtil {
                 ingredient.getId() == null).collect(Collectors.toCollection(ArrayList::new));
 
         //Segregate already persisted ingredients to a map
+        System.out.println(newlyAddedIngredientsInInput.stream()
+                //Map ingredient to corresponding to its name
+                .map(IngredientDto::getName).collect(Collectors.toList()));
         Map<String, Ingredient> newlyAddedIngredientsAvailInDb = ingredientRepository.findIngredientsByNameIn(
                 newlyAddedIngredientsInInput.stream()
                 //Map ingredient to corresponding to its name

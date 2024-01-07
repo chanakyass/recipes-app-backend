@@ -8,8 +8,11 @@ import spring.io.rest.recipes.repositories.IngredientRepository;
 import spring.io.rest.recipes.services.dtos.entities.IngredientDto;
 import spring.io.rest.recipes.services.dtos.mappers.IngredientMapper;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class IngredientService {
@@ -39,7 +42,9 @@ public class IngredientService {
     }
 
     public List<IngredientDto> getAllIngredientsStartingWith(String ingredientName) {
-        List<Ingredient> ingredientList = ingredientRepository.findIngredientsStartingWith(ingredientName);
+        String formattedString = Arrays.stream(ingredientName.split(" ")).filter((str) -> !str.equals(""))
+                .collect(Collectors.joining(" "));
+        List<Ingredient> ingredientList = ingredientRepository.findIngredientsStartingWith(formattedString);
         return ingredientMapper.toIngredientDtoList(ingredientList);
     }
 }
